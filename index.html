@@ -1,91 +1,178 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DOM con JavaScript</title>
-    <style>
-      .titulo-cambiado {
-        font-weight: bold;
-        color: red;
-      }
-    </style>
+    <title>Document</title>
   </head>
   <body>
-    <h2>Crear elemento</h2>
-    <input id="nombre" type="text" placeholder="Escribe tu nombre" />
-    <input id="edad" type="number" placeholder="Escribe tu edad" />
-    <button id="btn-agregar">Agregar elemento</button>
+    <h1>Mi Página Web</h1>
+    <p>Bienvenido a mi página web.</p>
+    <p>PRACTICANDO LOS METODOS CRUD</p>
 
-    <h2>Editar elemento</h2>
-    <input id="nombre_edit" type="text" placeholder="Escribe tu nombre" />
-    <input id="edad_edit" type="number" placeholder="Escribe tu edad" />
-    <button id="btn-editar">Editar elemento</button>
+    <h2>Crear producto</h2>
 
-    <h2>Listar elementos</h2>
-    <table>
+    <form action="" method="post">
+      <input type="text" id="nombre" placeholder="Ingrese el nombre" />
+      <input type="text" id="precio" placeholder="Ingrese el precio" />
+      <button id="agregar" type="submit">Agregar Producto</button>
+    </form>
+
+    <h2>Editar producto</h2>
+    <form action="" method="post">
+      <input type="text" id="nombre-editar" placeholder="Ingrese el nombre" />
+      <input type="text" id="precio-editar" placeholder="Ingrese el precio" />
+      <button id="editar" type="submit">Editar Producto</button>
+    </form>
+
+    <br />
+    <h2>Lista de Productos</h2>
+    <table id="tabla-productos" border="1">
       <thead>
         <tr>
-          <th>Nombre</th>
-          <th>Edad</th>
+          <th>Producto</th>
+          <th>Precio</th>
           <th>Editar</th>
           <th>Eliminar</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>Ana</td>
+          <td>Producto 1</td>
           <td>25</td>
-          <td>Editar</td>
-          <td>Eliminar</td>
+          <td>
+            <button class="btn-editar">Editar</button>
+          </td>
+          <td>
+            <button class="btn-eliminar">Eliminar</button>
+          </td>
         </tr>
         <tr>
-          <td>Juan</td>
+          <td>Producto 2</td>
           <td>30</td>
-          <td>Editar</td>
-          <td>Eliminar</td>
+          <td>
+            <button class="btn-editar">Editar</button>
+          </td>
+          <td>
+            <button class="btn-eliminar">Eliminar</button>
+          </td>
         </tr>
       </tbody>
     </table>
 
     <script>
-      const btn = document.querySelector("#btn-agregar");
+      // CREAR
+      const nombreInput = document.getElementById("nombre");
+      const precioInput = document.getElementById("precio");
+      const agregarBtn = document.getElementById("agregar");
+      const tablaProductos = document.getElementById("tabla-productos");
 
-      btn.addEventListener("click", () => {
-        const nombre = document.querySelector("#nombre").value;
-        const edad = document.querySelector("#edad").value;
+      agregarBtn.addEventListener("click", function (event) {
+        event.preventDefault();
 
-        if (nombre && edad) {
-          const nuevaFila = document.createElement("tr");
-          nuevaFila.innerHTML = `<td>${nombre}</td><td>${edad}</td>`;
+        const nombre = nombreInput.value.trim();
+        const precio = precioInput.value.trim();
 
-          const tbody = document.querySelector("tbody");
-          tbody.appendChild(nuevaFila);
-        } else {
-          alert("Por favor, completa ambos campos.");
+        // alert("Producto agregado: " + nombre + " - Precio: " + precio);
+
+        if (!nombre || !precio) {
+          alert("Por favor, complete todos los campos.");
+          return;
         }
+
+        const nuevaFila = document.createElement("tr");
+        const celdaNombre = document.createElement("td");
+        const celdaPrecio = document.createElement("td");
+        const celdaEditar = document.createElement("td");
+        const celdaEliminar = document.createElement("td");
+
+        celdaNombre.textContent = nombre;
+        celdaPrecio.textContent = precio;
+        celdaEditar.innerHTML = '<button class="btn-editar">Editar</button>';
+        celdaEliminar.innerHTML =
+          '<button class="btn-eliminar">Eliminar</button>';
+
+        nuevaFila.appendChild(celdaNombre);
+        nuevaFila.appendChild(celdaPrecio);
+        nuevaFila.appendChild(celdaEditar);
+        nuevaFila.appendChild(celdaEliminar);
+
+        tablaProductos.querySelector("tbody").appendChild(nuevaFila);
       });
 
-      // 1. OBTENER elementos del DOM
-      const titulo = document.getElementById("titulo");
-      const boton = document.querySelector("#btn-cambiar");
-      const inputNombre = document.querySelector("#nombre");
-      const saludo = document.querySelector("#saludo");
+      // EDITAR
+      const editarBtn = document.getElementById("editar");
+      const nombreEditarInput = document.getElementById("nombre-editar");
+      const precioEditarInput = document.getElementById("precio-editar");
 
-      // 2. LEER el texto de un elemento
-      console.log(titulo.textContent); // "HOLA MUNDO!!"
+      // Guardamos aquí la fila que se está editando (null = ninguna)
+      let filaEditando = null;
 
-      // 3. AÑADIR un evento y MODIFICAR el texto al hacer click
-      boton.addEventListener("click", () => {
-        titulo.textContent = "¡Texto cambiado con JS!";
-        titulo.style.fontSize = "20px";
-        titulo.style.color = "blue";
-        titulo.classList.add("titulo-cambiado");
+      editarBtn.addEventListener("click", function (event) {
+        event.preventDefault();
+
+        const nombreEditar = nombreEditarInput.value.trim();
+        const precioEditar = precioEditarInput.value.trim();
+
+        if (!filaEditando) {
+          alert("Primero pulsa 'Editar' en la fila que quieres modificar.");
+          return;
+        }
+
+        if (!nombreEditar || !precioEditar) {
+          alert("Por favor, complete todos los campos para editar.");
+          return;
+        }
+
+        // Actualizamos las celdas de la fila guardada
+        const celdas = filaEditando.querySelectorAll("td");
+        celdas[0].textContent = nombreEditar;
+        celdas[1].textContent = precioEditar;
+
+        // Limpiamos el formulario y "soltamos" la fila
+        nombreEditarInput.value = "";
+        precioEditarInput.value = "";
+        filaEditando = null;
       });
 
-      // 4. Evento "input": se dispara cada vez que el usuario escribe
-      inputNombre.addEventListener("input", (evento) => {
-        saludo.textContent = "Hola, " + evento.target.value;
+      // Usamos delegación de eventos: escuchamos los clics en el <tbody>
+      // para que también funcione con las filas que se agregan después.
+      const tbody = tablaProductos.querySelector("tbody");
+
+      // EDITAR: al pulsar "Editar" en una fila, cargamos sus datos en el formulario
+      tbody.addEventListener("click", function (event) {
+        if (!event.target.classList.contains("btn-editar")) {
+          return;
+        }
+
+        filaEditando = event.target.closest("tr");
+        const celdas = filaEditando.querySelectorAll("td");
+
+        nombreEditarInput.value = celdas[0].textContent;
+        precioEditarInput.value = celdas[1].textContent;
+        nombreEditarInput.focus();
+      });
+
+      // ELIMINAR
+      tbody.addEventListener("click", function (event) {
+        // Solo nos interesa si se hizo clic en un botón "Eliminar"
+        if (!event.target.classList.contains("btn-eliminar")) {
+          return;
+        }
+
+        // closest() sube por el DOM hasta encontrar la fila <tr> del botón
+        const fila = event.target.closest("tr");
+        const nombreProducto = fila.querySelector("td").textContent;
+
+        if (confirm("¿Seguro que quieres eliminar " + nombreProducto + "?")) {
+          // Si borramos la fila que se estaba editando, limpiamos el formulario
+          if (fila === filaEditando) {
+            filaEditando = null;
+            nombreEditarInput.value = "";
+            precioEditarInput.value = "";
+          }
+          fila.remove();
+        }
       });
     </script>
   </body>
